@@ -5,20 +5,20 @@ from threading import Thread
 
 IP_ROBOT = "192.168.1.6"
 PORT = 6601
-INDEX_CAMERA = 1
+INDEX_CAMERA = 0
 MIN_AREA = 6500
 
-lower_red = np.array([0,88,210])
-upper_red = np.array([15,242,255])
+lower_red = np.array([0,41,166])
+upper_red = np.array([13,185,255])
 
-lower_blue = np.array([83,36,155])
-upper_blue = np.array([134,255,255])
+lower_blue = np.array([74,43,179])
+upper_blue = np.array([160,166,255])
 
-lower_green = np.array([34,70,103])
-upper_green = np.array([96,255,255])
+lower_green = np.array([49,28,127])
+upper_green = np.array([66,90,255])
 
-lower_yellow = np.array([10,86,200])
-upper_yellow = np.array([84,170,255])
+lower_yellow = np.array([10,37,200])
+upper_yellow = np.array([35,118,255])
 
 List_Colors = [(lower_red, upper_red),
                (lower_blue, upper_blue),
@@ -92,7 +92,8 @@ while True:
     if ret:
         roi = frame[0:430, 190:800]
         hsv = cv2.cvtColor(roi, cv2.COLOR_BGR2HSV)
-
+        cv2.line(roi, (0,18) , (800,18) , (0,0,255) , 2)
+        cv2.line(roi, (0,400) , (800,400) , (0,0,255) , 2)
         for idx_color, (low, high) in enumerate(List_Colors):
             mask = cv2.inRange(hsv, low, high)
             contours , _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -108,7 +109,6 @@ while True:
                     box = np.intp(box)
 
                     cv2.drawContours(roi, [box], 0, (221, 160, 221), 3)
-                    
                     M = cv2.moments(c)
                     if M["m00"] != 0:
                         cX = int(M["m10"] / M["m00"])
@@ -126,12 +126,11 @@ while True:
                         color = 3
 
                     R_robot = round(-rect[2] , 2 )
-                    X_robot = round(( -0.2149 * cY ) + 319.67  ,  2)
-                    Y_robot = 131.70
+                    X_robot = round((-0.217 * cY ) + 319.32 ,  2)
+                    Y_robot = 131.23
 
                     if R_robot <= -17.00 and R_robot >= -73.00:
-
-                        Y_robot = 130.10
+                        Y_robot = 129.22
                     
                     Robot_Active = "1"
             else:
